@@ -5,22 +5,23 @@ from chatterbot.trainers import ListTrainer
 from chatterbot.trainers import ChatterBotCorpusTrainer
 
 
-my_bot = ChatBot("Training demo",
-                 database="./db.sqlite3")
+my_bot = ChatBot(
+    "Training demo",
+    logic_adapters=[
+        'chatterbot.logic.MathematicalEvaluation',
+        'chatterbot.logic.TimeLogicAdapter'
+    ],
+    database_uri='sqlite:///db.sqlite3')
 
+list_trainer = ListTrainer(my_bot)
 # 直接写语句训练
-my_bot.set_trainer(ListTrainer)
-
-my_bot.train(["你叫什么名字？", "我叫小白兔！", ])
-my_bot.train([
+list_trainer.train(["你叫什么名字？", "我叫小白兔！", ])
+list_trainer.train([
     "Test1",
     "Test2",
     "Test3",
     "Test4",
 ])
-
 # 使用自定义语句训练它
-my_bot.set_trainer(ChatterBotCorpusTrainer)
-my_bot.train("chatterbot.corpus.mytrain")
-# while True:
-#     print(my_bot.get_response(input("user:")))
+corpus_trainer = ChatterBotCorpusTrainer(my_bot)
+corpus_trainer.train( r"./chatbot/")
